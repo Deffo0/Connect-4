@@ -108,11 +108,13 @@ def get_score(board):
     score = [0, 0]
     detection_kernels = get_kernels()
     for kernel in detection_kernels:
-        if (convolve2d(get_player_board(board, red), kernel, mode="valid") == 4).any():
-            score[0] = score[0] + 1
+        red_matches = (convolve2d(get_player_board(board, red), kernel, mode="valid") == 4)
+        if red_matches.any():
+            score[0] = score[0] + red_matches.sum()
     for kernel in detection_kernels:
-        if (convolve2d(get_player_board(board, yellow), kernel, mode="valid") == 4).any():
-            score[1] = score[1] + 1
+        blue_matches = (convolve2d(get_player_board(board, yellow), kernel, mode="valid") == 4)
+        if blue_matches.any():
+            score[1] = score[1] + blue_matches.sum()
     return score
 
 
