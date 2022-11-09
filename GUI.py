@@ -111,9 +111,9 @@ def gameplay():
             for i in range(3):
                 for j in range(3):
                     if board[i][j] == ai.EMPTY and tiles[i][j].collidepoint(gameplay_mouse):
-                        print("lol")
+
                         board = ai.result(board, j)
-                        print(board)
+
                         time.sleep(0.2)
 
     if the_end:
