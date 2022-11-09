@@ -108,8 +108,8 @@ def gameplay():
         if tree_button.collidepoint(gameplay_mouse):
             tree = ai.get_tree()
         elif user == player and not the_end:
-            for i in range(3):
-                for j in range(3):
+            for i in range(6):
+                for j in range(7):
                     if board[i][j] == ai.EMPTY and tiles[i][j].collidepoint(gameplay_mouse):
 
                         board = ai.result(board, j)
