@@ -53,7 +53,7 @@ def start_menu():
             time.sleep(0.2)
             begin = True
 
-        elif red_without_pruning(start_mouse):
+        elif red_without_pruning.collidepoint(start_mouse):
             user = ai.red
             pruning = False
             board = ai.initial_state()
@@ -96,7 +96,7 @@ def gameplay():
     if user != player and not the_end:
         if ai_turn:
             time.sleep(0.5)
-            move, tree = ai.minimax(board, pruning, limited_depth)
+            move, tree = ai.minimax(board, pruning, int(limited_depth))
             board = ai.result(board, move)
             ai_turn = False
         else:

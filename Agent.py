@@ -2,10 +2,11 @@
 Tic Tac Toe Player
 """
 import copy
-from scipy.signal import convolve2d
-import numpy as np
-import math
 
+import numpy as np
+from scipy.signal import convolve2d
+
+max_level = 42
 red = "red"
 yellow = "yellow"
 EMPTY = ""
@@ -29,18 +30,18 @@ def player(board):
     Returns player who has the next turn on a board.
     """
     red_count = 0
-    blue_count = 0
+    yellow_count = 0
     for row in board:
         for cell in row:
             if cell == red:
                 red_count = red_count + 1
             elif cell == yellow:
-                blue_count = blue_count + 1
-    if red_count + blue_count == 42:
+                yellow_count = yellow_count + 1
+    if red_count + yellow_count == 42:
         return None
-    elif red_count > blue_count:
+    elif red_count > yellow_count:
         return yellow
-    elif red_count == blue_count:
+    elif red_count == yellow_count:
         return red
 
 
@@ -69,7 +70,7 @@ def result(board, action):
             new_board[i][j] = copy.deepcopy(board[i][j])
 
     for i in range(0, 6):
-        if new_board[i][action] != EMPTY and i-1 >= 0:
+        if new_board[i][action] != EMPTY and i - 1 >= 0:
             landing_index = i - 1
             new_board[landing_index][action] = player(board)
             break
@@ -129,7 +130,37 @@ def winner(board):
     return None
 
 
-def terminal(board):
+def exact_utility(board):
+    """
+    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
+    """
+    winner_symbol = winner(board)
+    if winner_symbol == red:
+        return 1
+    elif winner_symbol == yellow:
+        return -1
+    elif winner_symbol is None:
+        return 0
+
+
+def expected_utility(board):
+    """
+    Returns the expected utility of some node where we cut the tree
+    TODO: implement this function
+    """
+
+    return 0
+
+
+def limited_terminal(level, max_depth):
+    """
+    Returns True if the game is over, False otherwise.
+    note: it works for limited and unlimited search
+    """
+    return max_level == 0 or level == max_depth
+
+
+def unlimited_terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
@@ -139,62 +170,55 @@ def terminal(board):
         return False
 
 
-def utility(board):
-    """
-    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
-    """
-    if terminal(board) is True:
-        winner_symbol = winner(board)
-        if winner_symbol == red:
-            return 1
-        elif winner_symbol == yellow:
-            return -1
-        elif winner_symbol is None:
-            return 0
-
-
 def minimax(board, pruning, limited_depth):
     """
     Returns the optimal action for the current player on the board.
     """
-    if terminal(board):
+    global depth
+    if (unlimited_terminal(board) and limited_depth >= 35) or (
+            limited_terminal(0, limited_depth) and limited_depth < 35):
         return None
+    depth = limited_depth
     if player(board) == red:
         optimal = (-10, None)
         for action in actions(board):
-            utility_value = min_value(result(board, action), optimal[0])
+            utility_value = min_value(result(board, action), optimal[0], pruning, 1 if limited_depth < max_level else -1)
             if utility_value > optimal[0]:
                 optimal = (utility_value, action)
 
     else:
         optimal = (10, None)
         for action in actions(board):
-            utility_value = max_value(result(board, action), optimal[0])
+            utility_value = max_value(result(board, action), optimal[0], pruning, 1 if limited_depth < max_level else -1)
             if utility_value < optimal[0]:
                 optimal = (utility_value, action)
+    print(f"....{optimal[0]}")
+    return optimal[1], None
 
-    return optimal[1]
 
-
-def max_value(board, predecessor_v):
-    if terminal(board):
-        return utility(board)
-
+def max_value(board, predecessor_v, pruning, level_no=-1):
+    if level_no != -1 and limited_terminal(level_no, depth):
+        return expected_utility(board)
+    if level_no == -1 and unlimited_terminal(board):
+        return exact_utility(board)
     v = -10
     for action in actions(board):
-        v = max(v, min_value(result(board, action), v))
-        if v > predecessor_v:
+        v = max(v, min_value(result(board, action), v, pruning, level_no + 1 if level_no != -1 else -1))
+        if v > predecessor_v and pruning:
             break
+    print(f"{v}, levelno.{level_no} from {board}")
     return v
 
 
-def min_value(board, predecessor_v):
-    if terminal(board):
-        return utility(board)
-
+def min_value(board, predecessor_v, pruning, level_no=-1):
+    if level_no != -1 and limited_terminal(level_no, depth):
+        return expected_utility(board)
+    if level_no == -1 and unlimited_terminal(board):
+        return exact_utility(board)
     v = 10
     for action in actions(board):
-        v = min(v, max_value(result(board, action), v))
-        if v < predecessor_v:
+        v = min(v, max_value(result(board, action), v, pruning, level_no + 1 if level_no != -1 else -1))
+        if v < predecessor_v and pruning:
             break
+    print(f"{v}, levelno.{level_no} from {board}")
     return v
