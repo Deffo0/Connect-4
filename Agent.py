@@ -5,11 +5,13 @@ import copy
 
 import numpy as np
 from scipy.signal import convolve2d
+from state_node import State
 
 max_level = 42
 red = "red"
 yellow = "yellow"
 EMPTY = ""
+tree_root = None
 
 
 def initial_state():
@@ -159,7 +161,7 @@ def limited_terminal(level, max_depth):
     Returns True if the game is over, False otherwise.
     note: it works for limited and unlimited search
     """
-    return max_level == 0 or level == max_depth
+    return max_level == 0 or level == max_depth + 1
 
 
 def unlimited_terminal(board):
@@ -176,51 +178,67 @@ def minimax(board, pruning, limited_depth):
     """
     Returns the optimal action for the current player on the board.
     """
+    root = State(board)
     global depth
-    if (unlimited_terminal(board) and limited_depth >= 35) or (
-            limited_terminal(0, limited_depth) and limited_depth < 35):
+    if (unlimited_terminal(board) and limited_depth >= max_level) or (
+            limited_terminal(0, limited_depth) and limited_depth < max_level):
         return None
     depth = limited_depth
     if player(board) == red:
         optimal = (-10, None)
         for action in actions(board):
-            utility_value = min_value(result(board, action), optimal[0], pruning, 1 if limited_depth < max_level else -1)
+            child = State(result(board, action))
+            root.add_child(child)
+            utility_value = min_value(child, optimal[0], pruning, 1 if limited_depth < max_level else -1)
             if utility_value > optimal[0]:
                 optimal = (utility_value, action)
+            root.set_utility(utility_value)
 
     else:
         optimal = (10, None)
         for action in actions(board):
-            utility_value = max_value(result(board, action), optimal[0], pruning, 1 if limited_depth < max_level else -1)
+            child = State(result(board, action))
+            root.add_child(child)
+            utility_value = max_value(child, optimal[0], pruning, 1 if limited_depth < max_level else -1)
             if utility_value < optimal[0]:
                 optimal = (utility_value, action)
-    print(f"....{optimal[0]}")
-    return optimal[1], None
+            root.set_utility(utility_value)
+
+    tree_root = root
+    return optimal[1], tree_root
 
 
-def max_value(board, predecessor_v, pruning, level_no=-1):
+def max_value(child, predecessor_v, pruning, level_no=-1):
     if level_no != -1 and limited_terminal(level_no, depth):
-        return expected_utility(board)
-    if level_no == -1 and unlimited_terminal(board):
-        return exact_utility(board)
+        return expected_utility(child.board)
+    if level_no == -1 and unlimited_terminal(child.board):
+        return exact_utility(child.board)
     v = -10
-    for action in actions(board):
-        v = max(v, min_value(result(board, action), v, pruning, level_no + 1 if level_no != -1 else -1))
+    for action in actions(child.board):
+        ch_child = State(result(child.board, action))
+        child.add_child(ch_child)
+        v = max(v, min_value(ch_child, v, pruning, level_no + 1 if level_no != -1 else -1))
+        child.set_utility(v)
         if v > predecessor_v and pruning:
             break
-    print(f"{v}, levelno.{level_no} from {board}")
     return v
 
 
-def min_value(board, predecessor_v, pruning, level_no=-1):
+def min_value(child, predecessor_v, pruning, level_no=-1):
     if level_no != -1 and limited_terminal(level_no, depth):
-        return expected_utility(board)
-    if level_no == -1 and unlimited_terminal(board):
-        return exact_utility(board)
+        return expected_utility(child.board)
+    if level_no == -1 and unlimited_terminal(child.board):
+        return exact_utility(child.board)
     v = 10
-    for action in actions(board):
-        v = min(v, max_value(result(board, action), v, pruning, level_no + 1 if level_no != -1 else -1))
+    for action in actions(child.board):
+        ch_child = State(result(child.board, action))
+        child.add_child(ch_child)
+        v = min(v, max_value(ch_child, v, pruning, level_no + 1 if level_no != -1 else -1))
+        child.set_utility(v)
         if v < predecessor_v and pruning:
             break
-    print(f"{v}, levelno.{level_no} from {board}")
     return v
+
+
+def get_tree():
+    return tree_root
