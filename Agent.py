@@ -59,6 +59,7 @@ def actions(board):
             if board[i][j] == EMPTY:
                 possible_moves.add(j)
     if len(possible_moves) == 0:
+        print(board)
         return None
     else:
         return possible_moves
