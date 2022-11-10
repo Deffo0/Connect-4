@@ -5,7 +5,7 @@ import copy
 
 import numpy as np
 from scipy.signal import convolve2d
-from state_node import State
+from Utils.StateNode import State
 
 max_level = 42
 red = "red"
@@ -30,6 +30,7 @@ def initial_state():
 def player(board):
     """
     Returns player who has the next turn on a board.
+    TODO: UPDATE FOR BITS REPRESENTATION
     """
     red_count = 0
     yellow_count = 0
@@ -50,6 +51,7 @@ def player(board):
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
+    TODO: UPDATE FOR BITS REPRESENTATION
     """
     possible_moves = set()
     for i in range(0, 6):
@@ -65,6 +67,7 @@ def actions(board):
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
+    TODO: UPDATE FOR BITS REPRESENTATION
     """
     new_board = initial_state()
     for i in range(0, 6):
@@ -86,13 +89,16 @@ def result(board, action):
 def get_kernels():
     horizontal_kernel = np.array([[1, 1, 1, 1]])
     vertical_kernel = np.transpose(horizontal_kernel)
-    diag1_kernel = np.eye(4, dtype=np.uint8)
-    diag2_kernel = np.fliplr(diag1_kernel)
-    detection_kernels = [horizontal_kernel, vertical_kernel, diag1_kernel, diag2_kernel]
+    main_diag_kernel = np.eye(4, dtype=np.uint8)
+    flip_main_diag_kernel = np.fliplr(main_diag_kernel)
+    detection_kernels = [horizontal_kernel, vertical_kernel, main_diag_kernel, flip_main_diag_kernel]
     return detection_kernels
 
 
 def get_player_board(board, player_color):
+    """
+    TODO: UPDATE FOR BITS REPRESENTATION
+    """
     player_board = np.zeros(shape=(6, 7))
     for i in range(6):
         for j in range(7):
@@ -114,9 +120,9 @@ def get_score(board):
         if red_matches.any():
             score[0] = score[0] + red_matches.sum()
     for kernel in detection_kernels:
-        blue_matches = (convolve2d(get_player_board(board, yellow), kernel, mode="valid") == 4)
-        if blue_matches.any():
-            score[1] = score[1] + blue_matches.sum()
+        yellow_matches = (convolve2d(get_player_board(board, yellow), kernel, mode="valid") == 4)
+        if yellow_matches.any():
+            score[1] = score[1] + yellow_matches.sum()
     return score
 
 
@@ -179,7 +185,7 @@ def minimax(board, pruning, limited_depth):
     Returns the optimal action for the current player on the board.
     """
     root = State(board)
-    global depth
+    global depth, tree_root
     if (unlimited_terminal(board) and limited_depth >= max_level) or (
             limited_terminal(0, limited_depth) and limited_depth < max_level):
         return None

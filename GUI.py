@@ -2,8 +2,9 @@ import sys
 import time
 
 import pygame
-
+from treelib import Node, Tree
 import Agent as ai
+from Utils.StateNode import State
 from Utils.Director import Director
 
 pygame.init()
@@ -106,14 +107,17 @@ def gameplay():
     if gameplay_click == 1:
         gameplay_mouse = pygame.mouse.get_pos()
         if tree_button.collidepoint(gameplay_mouse):
-            tree = ai.get_tree()
+            tree_root: State = ai.get_tree()
+            tree = Tree()
+            tree.create_node(tree_root.utility, tree_root.board)
+            tree_root.convert(tree)
+            tree.show()
+            tree.to_graphviz("Tree Visualization", "circle", "digraph")
         elif user == player and not the_end:
             for i in range(6):
                 for j in range(7):
                     if board[i][j] == ai.EMPTY and tiles[i][j].collidepoint(gameplay_mouse):
-
                         board = ai.result(board, j)
-
                         time.sleep(0.2)
 
     if the_end:
