@@ -187,9 +187,7 @@ def minimax(board, pruning, limited_depth):
     """
     root = State(board)
     global depth, tree_root
-    if (unlimited_terminal(board) and limited_depth >= max_level) or (
-            limited_terminal(0, limited_depth) and limited_depth < max_level):
-        return None
+
     depth = limited_depth
     if player(board) == red:
         optimal = (-10, None)
