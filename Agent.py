@@ -103,7 +103,7 @@ def actions(board):
 
 
 
-def result(board, action, player=None):
+def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
