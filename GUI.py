@@ -117,7 +117,7 @@ def gameplay():
         elif user == player and not the_end:
             for i in range(6):
                 for j in range(7):
-                    if board.retrieve(i, j) == -1 and tiles[5 - i][j].collidepoint(gameplay_mouse):
+                    if board.retrieve(i, j) == -1 and tiles[i][j].collidepoint(gameplay_mouse):
                         board = ai.result(board, j)
                         time.sleep(0.2)
 

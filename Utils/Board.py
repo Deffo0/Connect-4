@@ -9,7 +9,6 @@ class Board:
         self.turn = first_turn
 
     def insert(self, col):
-        print("insert")
         player = self.turn
         col_shift = 6 - col
         index = 6 + col_shift * 9
@@ -45,6 +44,7 @@ class Board:
         return col_state >> index
 
     def retrieve(self, row, col):
+        row = 5 - row
         col_shift = 6 - col
         index = 6 + col_shift * 9
         num_of_play = self.num_of_plays(col)
