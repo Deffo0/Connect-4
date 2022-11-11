@@ -77,6 +77,7 @@ def start_menu():
 
 
 def gameplay():
+    # is that a bin board or an int board ??????
     global board, begin, ai_turn, tree
     the_end = False
     tiles = director.game_board(board)

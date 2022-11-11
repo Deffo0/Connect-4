@@ -6,7 +6,7 @@ import copy
 import numpy as np
 from scipy.signal import convolve2d
 from Utils.StateNode import State
-
+from Utils.Board import Board
 max_level = 42
 red = "red"
 yellow = "yellow"
@@ -18,6 +18,12 @@ def initial_state():
     """
     Returns starting state of the board.
     """
+    # IS this an int board or a bin board ??????
+    
+    # KOTB WORK
+    # return Board()
+    
+    # DEFFO WORK
     return [[EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
@@ -30,8 +36,24 @@ def initial_state():
 def player(board):
     """
     Returns player who has the next turn on a board.
-    TODO: UPDATE FOR BITS REPRESENTATION
+    TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
+
+    # KOTB WORK
+    # terminal = True
+    # for i in range(7):
+    #     if(board.num_of_plays(i) < 6):
+    #         terminal = False
+    #         break 
+    # if(terminal): 
+    #     return None
+
+    # if(board.turn == 0):
+    #     return yellow
+    # elif(board.turn == 1):
+    #     return red
+
+    # DEFFO WORK
     red_count = 0
     yellow_count = 0
     for row in board:
@@ -51,8 +73,22 @@ def player(board):
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
-    TODO: UPDATE FOR BITS REPRESENTATION
+    TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
+    # KOTB WORK
+    # possible_moves = set()
+
+    # for i in range(7):
+    #     if(board.num_of_plays(i) < 6):
+    #         possible_moves.add(i)        
+    # if len(possible_moves) == 0:
+    #     print(board)
+    #     return None
+    # else:
+    #     return possible_moves
+
+
+    # DEFFO WORK
     possible_moves = set()
     for i in range(0, 6):
         for j in range(0, 7):
@@ -65,11 +101,19 @@ def actions(board):
         return possible_moves
 
 
-def result(board, action):
+
+
+def result(board, action, player=None):
     """
     Returns the board that results from making move (i, j) on the board.
-    TODO: UPDATE FOR BITS REPRESENTATION
+    TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
+    # KOTB WORK
+    # if(player != None):
+    #     board.insert(action, player)
+    # return board
+
+    # DEFFO WORK
     new_board = initial_state()
     for i in range(0, 6):
         for j in range(0, 7):
@@ -98,8 +142,23 @@ def get_kernels():
 
 def get_player_board(board, player_color):
     """
-    TODO: UPDATE FOR BITS REPRESENTATION
+    TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
+    # KOTB WORK 
+    # if(player_color == red):
+    #     player_color = 1
+    # elif(player_color == yellow):
+    #     player_color = 0
+    # player_board = np.zeros(shape=(6, 7))
+    # for i in range(6):
+    #     for j in range(7):
+    #         if board.retrieve(i, j) == player_color:
+    #             player_board[i][j] = 1
+    #         else:
+    #             player_board[i][j] = 0
+    # return player_board
+
+    # DEFFO WORK
     player_board = np.zeros(shape=(6, 7))
     for i in range(6):
         for j in range(7):
@@ -108,6 +167,7 @@ def get_player_board(board, player_color):
             else:
                 player_board[i][j] = 0
     return player_board
+
 
 
 def get_score(board):
