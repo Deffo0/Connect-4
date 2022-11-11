@@ -2,7 +2,8 @@ import sys
 import time
 
 import pygame
-from treelib import Node, Tree
+from anytree.exporter import DotExporter
+from anytree import Node, RenderTree
 import Agent as ai
 from Utils.StateNode import State
 from Utils.Director import Director
@@ -109,11 +110,12 @@ def gameplay():
         gameplay_mouse = pygame.mouse.get_pos()
         if tree_button.collidepoint(gameplay_mouse):
             tree_root: State = ai.get_tree()
-            tree = Tree()
-            tree.create_node(tree_root.utility, tree_root.board.state)
-            tree_root.convert(tree)
-            tree.show()
-            tree.to_graphviz("Tree Visualization", "circle", "digraph")
+            root = Node(tree_root.utility)
+            tree_root.convert(root)
+            for pre, fill, node in RenderTree(root):
+                print("%s%s" % (pre, node.name))
+            # DotExporter(root).to_picture("Resources/Minmax Tree.png")
+            time.sleep(0.4)
         elif user == player and not the_end:
             for i in range(6):
                 for j in range(7):

@@ -7,6 +7,7 @@ import numpy as np
 from scipy.signal import convolve2d
 from Utils.StateNode import State
 from Utils.Board import Board
+
 max_level = 42
 red = "red"
 yellow = "yellow"
@@ -20,8 +21,6 @@ def initial_state():
     """
     # IS this an int board or a bin board ??????
     return Board(1)
-    
-   
 
 
 def player(board):
@@ -31,18 +30,16 @@ def player(board):
     """
     terminal = True
     for i in range(7):
-        if(board.num_of_plays(i) < 6):
+        if board.num_of_plays(i) < 6:
             terminal = False
-            break 
-    if(terminal): 
+            break
+    if terminal:
         return None
 
-    if(board.turn == 0):
+    if board.turn == 0:
         return yellow
-    elif(board.turn == 1):
+    elif board.turn == 1:
         return red
-
-
 
 
 def actions(board):
@@ -53,17 +50,13 @@ def actions(board):
     possible_moves = set()
 
     for i in range(7):
-        if(board.num_of_plays(i) < 6):
-            possible_moves.add(i)    
-    if len(possible_moves) == 0:
-        return None
-    else:
-        return possible_moves
+        if board.num_of_plays(i) < 6:
+            possible_moves.add(i)
+
+    return possible_moves
 
 
-
-
-def result(board : Board, action):
+def result(board: Board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
@@ -72,7 +65,6 @@ def result(board : Board, action):
     new_board.state = copy.deepcopy(board.state)
     new_board.insert(action)
     return new_board
- 
 
 
 def get_kernels():
@@ -89,9 +81,9 @@ def get_player_board(board, player_color):
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
     # KOTB WORK 
-    if(player_color == red):
+    if player_color == red:
         player_color = 1
-    elif(player_color == yellow):
+    elif player_color == yellow:
         player_color = 0
     player_board = np.zeros(shape=(6, 7))
     for i in range(6):
@@ -101,9 +93,6 @@ def get_player_board(board, player_color):
             else:
                 player_board[i][j] = 0
     return player_board
-
-   
-
 
 
 def get_score(board):

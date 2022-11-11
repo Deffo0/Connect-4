@@ -1,5 +1,4 @@
-from treelib import Tree
-
+from anytree import Node
 
 class State:
     def __init__(self, board):
@@ -19,7 +18,7 @@ class State:
     def set_utility(self, utility):
         self.utility = utility
 
-    def convert(self, tree: Tree):
-        for child in self.children:
-            tree.create_node(child.utility, child.board.state, self.board.state)
-            child.convert(tree)
+    def convert(self, parent: Node):
+        for i in range(len(self.children)):
+            node = Node(self.children[i].utility, parent)
+            self.children[i].convert(node)
