@@ -6,7 +6,7 @@ from treelib import Node, Tree
 import Agent as ai
 from Utils.StateNode import State
 from Utils.Director import Director
-
+from Utils.Board import get_board_bin
 pygame.init()
 size = width, height = 900, 700
 screen = pygame.display.set_mode(size)
@@ -80,7 +80,7 @@ def gameplay():
     # is that a bin board or an int board ??????
     global board, begin, ai_turn, tree
     the_end = False
-    tiles = director.game_board(board)
+    tiles = director.game_board(get_board_bin(board))
     tree_button = director.tree_button()
     player = ai.player(board)
     if player is None:
@@ -110,14 +110,14 @@ def gameplay():
         if tree_button.collidepoint(gameplay_mouse):
             tree_root: State = ai.get_tree()
             tree = Tree()
-            tree.create_node(tree_root.utility, tree_root.board)
+            tree.create_node(tree_root.utility, tree_root.board.state)
             tree_root.convert(tree)
             tree.show()
             tree.to_graphviz("Tree Visualization", "circle", "digraph")
         elif user == player and not the_end:
             for i in range(6):
                 for j in range(7):
-                    if board[i][j] == ai.EMPTY and tiles[i][j].collidepoint(gameplay_mouse):
+                    if board.retrieve(i, j) == -1 and tiles[5 - i][j].collidepoint(gameplay_mouse):
                         board = ai.result(board, j)
                         time.sleep(0.2)
 

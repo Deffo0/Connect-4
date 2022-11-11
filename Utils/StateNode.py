@@ -21,5 +21,5 @@ class State:
 
     def convert(self, tree: Tree):
         for child in self.children:
-            tree.create_node(child.utility, child.board, self.board)
+            tree.create_node(child.utility, child.board.state, self.board.state)
             child.convert(tree)

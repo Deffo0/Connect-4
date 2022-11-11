@@ -19,18 +19,9 @@ def initial_state():
     Returns starting state of the board.
     """
     # IS this an int board or a bin board ??????
+    return Board(1)
     
-    # KOTB WORK
-    # return Board()
-    
-    # DEFFO WORK
-    return [[EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-            ]
+   
 
 
 def player(board):
@@ -38,36 +29,20 @@ def player(board):
     Returns player who has the next turn on a board.
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
-
-    # KOTB WORK
-    # terminal = True
-    # for i in range(7):
-    #     if(board.num_of_plays(i) < 6):
-    #         terminal = False
-    #         break 
-    # if(terminal): 
-    #     return None
-
-    # if(board.turn == 0):
-    #     return yellow
-    # elif(board.turn == 1):
-    #     return red
-
-    # DEFFO WORK
-    red_count = 0
-    yellow_count = 0
-    for row in board:
-        for cell in row:
-            if cell == red:
-                red_count = red_count + 1
-            elif cell == yellow:
-                yellow_count = yellow_count + 1
-    if red_count + yellow_count == 42:
+    terminal = True
+    for i in range(7):
+        if(board.num_of_plays(i) < 6):
+            terminal = False
+            break 
+    if(terminal): 
         return None
-    elif red_count > yellow_count:
+
+    if(board.turn == 0):
         return yellow
-    elif red_count == yellow_count:
+    elif(board.turn == 1):
         return red
+
+
 
 
 def actions(board):
@@ -75,27 +50,12 @@ def actions(board):
     Returns set of all possible actions (i, j) available on the board.
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
-    # KOTB WORK
-    # possible_moves = set()
-
-    # for i in range(7):
-    #     if(board.num_of_plays(i) < 6):
-    #         possible_moves.add(i)        
-    # if len(possible_moves) == 0:
-    #     print(board)
-    #     return None
-    # else:
-    #     return possible_moves
-
-
-    # DEFFO WORK
     possible_moves = set()
-    for i in range(0, 6):
-        for j in range(0, 7):
-            if board[i][j] == EMPTY:
-                possible_moves.add(j)
+
+    for i in range(7):
+        if(board.num_of_plays(i) < 6):
+            possible_moves.add(i)    
     if len(possible_moves) == 0:
-        print(board)
         return None
     else:
         return possible_moves
@@ -103,32 +63,16 @@ def actions(board):
 
 
 
-def result(board, action):
+def result(board : Board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
-    # KOTB WORK
-    # if(player != None):
-    #     board.insert(action, player)
-    # return board
-
-    # DEFFO WORK
-    new_board = initial_state()
-    for i in range(0, 6):
-        for j in range(0, 7):
-            new_board[i][j] = copy.deepcopy(board[i][j])
-
-    for i in range(0, 6):
-        if new_board[i][action] != EMPTY and i - 1 >= 0:
-            landing_index = i - 1
-            new_board[landing_index][action] = player(board)
-            break
-        elif i == 5:
-            landing_index = i
-            new_board[landing_index][action] = player(board)
-
+    new_board = Board(copy.deepcopy(board.turn))
+    new_board.state = copy.deepcopy(board.state)
+    new_board.insert(action)
     return new_board
+ 
 
 
 def get_kernels():
@@ -145,28 +89,20 @@ def get_player_board(board, player_color):
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
     # KOTB WORK 
-    # if(player_color == red):
-    #     player_color = 1
-    # elif(player_color == yellow):
-    #     player_color = 0
-    # player_board = np.zeros(shape=(6, 7))
-    # for i in range(6):
-    #     for j in range(7):
-    #         if board.retrieve(i, j) == player_color:
-    #             player_board[i][j] = 1
-    #         else:
-    #             player_board[i][j] = 0
-    # return player_board
-
-    # DEFFO WORK
+    if(player_color == red):
+        player_color = 1
+    elif(player_color == yellow):
+        player_color = 0
     player_board = np.zeros(shape=(6, 7))
     for i in range(6):
         for j in range(7):
-            if board[i][j] == player_color:
+            if board.retrieve(i, j) == player_color:
                 player_board[i][j] = 1
             else:
                 player_board[i][j] = 0
     return player_board
+
+   
 
 
 

@@ -4,11 +4,13 @@ def prettyPrint(boardBin):
 
 
 class Board:
-    def __init__(self):
+    def __init__(self, first_turn):
         self.state = 0
-        self.turn = -1
+        self.turn = first_turn
 
-    def insert(self, col, player):
+    def insert(self, col):
+        print("insert")
+        player = self.turn
         col_shift = 6 - col
         index = 6 + col_shift * 9
         self.state = self.state + 2 ** index
@@ -49,7 +51,6 @@ class Board:
         if(row >= num_of_play):
             return -1
         player = self.state & (2 ** (index - row - 1))
-        # print(index - row - 1)
         if(player == 0):
             return 0
         return 1
@@ -67,10 +68,13 @@ def get_board_bin(board):
         temp = str_num[left_index: right_index]
         for j in range(3, pre_garbage + 3):
             current = temp[j]
-            board_bin[i].append(current)
+            if(current == '0'):
+                board_bin[i].append("yellow")
+            elif(current == '1'):
+                board_bin[i].append("red")
         for j in range(pre_garbage + 3, 9):
             current = temp[j]
-            board_bin[i].append(" ")
+            board_bin[i].append("")
     
     board_bin_modified = []
 
@@ -82,55 +86,5 @@ def get_board_bin(board):
         row_ctr += 1
     return board_bin_modified
 
-
-board = Board()
-board.insert(3, 0)
-board.insert(3, 0)
-board.insert(3, 0)
-board.insert(3, 1)
-board.insert(3, 0)
-board.insert(3, 1)
-board.insert(4, 1)
-board.insert(4, 1)
-board.insert(6, 1)
-board.insert(6, 0)
-board.insert(0, 0)
-
-
-
-prettyPrint(get_board_bin(board))
-print(board.retrieve(0, 0))
-print(board.retrieve(0, 1))
-print(board.retrieve(0, 2))
-print(board.retrieve(0, 3))
-print(board.retrieve(0, 4))
-print(board.retrieve(0, 5))
-print(board.retrieve(0, 6))
-
-print(board.retrieve(1, 0))
-print(board.retrieve(1, 1))
-print(board.retrieve(1, 2))
-print(board.retrieve(1, 3))
-print(board.retrieve(1, 4))
-print(board.retrieve(1, 5))
-print(board.retrieve(1, 6))
-
-
-print(board.retrieve(2, 0))
-print(board.retrieve(2, 1))
-print(board.retrieve(2, 2))
-print(board.retrieve(2, 3))
-print(board.retrieve(2, 4))
-print(board.retrieve(2, 5))
-print(board.retrieve(2, 6))
-
-
-# board.retrieve(0, 0)
-# board.retrieve(0, 1)
-# board.retrieve(0, 2)
-# board.retrieve(0, 3)
-# board.retrieve(0, 4)
-# board.retrieve(0, 5)
-# board.retrieve(0, 6)
 
 
