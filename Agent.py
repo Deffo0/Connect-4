@@ -130,13 +130,12 @@ def exact_utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    winner_symbol = winner(board)
-    if winner_symbol == red:
+    score = get_score(board)
+    if score[0] > score[1]:
         return 1
-    elif winner_symbol == yellow:
+    if score[0] < score[1]:
         return -1
-    elif winner_symbol is None:
-        return 0
+    return 0
 
 
 def expected_utility(board):
@@ -160,7 +159,7 @@ def unlimited_terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) is not None or player(board) is None:
+    if player(board) is None:
         return True
     else:
         return False
@@ -201,7 +200,7 @@ def minimax(board, pruning, limited_depth):
 def max_value(child, predecessor_v, pruning, level_no=-1):
     if level_no != -1 and limited_terminal(level_no, depth):
         return expected_utility(child.board)
-    if level_no == -1 and unlimited_terminal(child.board):
+    if level_no == -1 or unlimited_terminal(child.board):
         return exact_utility(child.board)
     v = -10
     for action in actions(child.board):
@@ -217,7 +216,7 @@ def max_value(child, predecessor_v, pruning, level_no=-1):
 def min_value(child, predecessor_v, pruning, level_no=-1):
     if level_no != -1 and limited_terminal(level_no, depth):
         return expected_utility(child.board)
-    if level_no == -1 and unlimited_terminal(child.board):
+    if level_no == -1 or unlimited_terminal(child.board):
         return exact_utility(child.board)
     v = 10
     for action in actions(child.board):
