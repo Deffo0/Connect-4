@@ -1,5 +1,5 @@
 """
-Tic Tac Toe Player
+Connect-4
 """
 import copy
 
