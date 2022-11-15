@@ -1,13 +1,19 @@
+import os
+import subprocess
 import sys
 import time
-
+import cv2
 import pygame
-from anytree.exporter import DotExporter
 from anytree import Node, RenderTree
+from anytree.exporter import DotExporter
+import pydot
+from treelib import Tree
+
 import Agent as ai
-from Utils.StateNode import State
-from Utils.Director import Director
 from Utils.Board import get_board_bin
+from Utils.Director import Director
+from Utils.StateNode import State
+
 pygame.init()
 size = width, height = 900, 700
 screen = pygame.display.set_mode(size)
@@ -109,13 +115,9 @@ def gameplay():
     if gameplay_click == 1:
         gameplay_mouse = pygame.mouse.get_pos()
         if tree_button.collidepoint(gameplay_mouse):
-            tree_root: State = ai.get_tree()
-            root = Node(tree_root.utility)
-            tree_root.convert(root)
-            for pre, fill, node in RenderTree(root):
-                print("%s%s" % (pre, node.name))
-            # DotExporter(root).to_picture("Resources/Minmax Tree.png")
+            display_tree(ai.get_tree())
             time.sleep(0.4)
+
         elif user == player and not the_end:
             for i in range(6):
                 for j in range(7):
@@ -131,6 +133,18 @@ def gameplay():
             if again_button.collidepoint(end_mouse):
                 time.sleep(0.2)
                 begin = False
+
+
+def display_tree(tree_root: State):
+    tree = Tree()
+    tree.create_node(tree_root.utility, id(tree_root.board))
+    tree_root.convert(tree)
+    tree.show()
+    tree.to_graphviz("Resources/MinmaxTree.dot", "circle", "digraph")
+    (graph,) = pydot.graph_from_dot_file('Resources/MinmaxTree.dot')
+    graph.write_pdf('MinmaxTree.pdf')
+    path = 'MinmaxTree.pdf'
+    subprocess.Popen([path], shell=True)
 
 
 while True:

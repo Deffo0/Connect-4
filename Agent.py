@@ -1,5 +1,5 @@
 """
-Tic Tac Toe Player
+Connect-4
 """
 import copy
 
@@ -13,6 +13,7 @@ red = "red"
 yellow = "yellow"
 EMPTY = ""
 tree_root = None
+depth = 0
 
 
 def initial_state():
@@ -152,7 +153,7 @@ def limited_terminal(level, max_depth):
     Returns True if the game is over, False otherwise.
     note: it works for limited and unlimited search
     """
-    return max_level == 0 or level == max_depth + 1
+    return max_depth == 0 or level == max_depth
 
 
 def unlimited_terminal(board):
@@ -171,14 +172,13 @@ def minimax(board, pruning, limited_depth):
     """
     root = State(board)
     global depth, tree_root
-
     depth = limited_depth
     if player(board) == red:
         optimal = (-10, None)
         for action in actions(board):
             child = State(result(board, action))
             root.add_child(child)
-            utility_value = min_value(child, optimal[0], pruning, 1 if limited_depth < max_level else -1)
+            utility_value = min_value(child, optimal[0], pruning, 1)
             if utility_value > optimal[0]:
                 optimal = (utility_value, action)
             root.set_utility(utility_value)
@@ -188,7 +188,7 @@ def minimax(board, pruning, limited_depth):
         for action in actions(board):
             child = State(result(board, action))
             root.add_child(child)
-            utility_value = max_value(child, optimal[0], pruning, 1 if limited_depth < max_level else -1)
+            utility_value = max_value(child, optimal[0], pruning, 1)
             if utility_value < optimal[0]:
                 optimal = (utility_value, action)
             root.set_utility(utility_value)
@@ -197,32 +197,34 @@ def minimax(board, pruning, limited_depth):
     return optimal[1], tree_root
 
 
-def max_value(child, predecessor_v, pruning, level_no=-1):
-    if level_no != -1 and limited_terminal(level_no, depth):
-        return expected_utility(child.board)
-    if level_no == -1 or unlimited_terminal(child.board):
+def max_value(child, predecessor_v, pruning, level_no):
+    if unlimited_terminal(child.board):
         return exact_utility(child.board)
+    if limited_terminal(level_no, depth):
+        return expected_utility(child.board)
+
     v = -10
     for action in actions(child.board):
         ch_child = State(result(child.board, action))
         child.add_child(ch_child)
-        v = max(v, min_value(ch_child, v, pruning, level_no + 1 if level_no != -1 else -1))
+        v = max(v, min_value(ch_child, v, pruning, level_no + 1))
         child.set_utility(v)
         if v > predecessor_v and pruning:
             break
     return v
 
 
-def min_value(child, predecessor_v, pruning, level_no=-1):
-    if level_no != -1 and limited_terminal(level_no, depth):
-        return expected_utility(child.board)
-    if level_no == -1 or unlimited_terminal(child.board):
+def min_value(child, predecessor_v, pruning, level_no):
+    if unlimited_terminal(child.board):
         return exact_utility(child.board)
+    if limited_terminal(level_no, depth):
+        return expected_utility(child.board)
+
     v = 10
     for action in actions(child.board):
         ch_child = State(result(child.board, action))
         child.add_child(ch_child)
-        v = min(v, max_value(ch_child, v, pruning, level_no + 1 if level_no != -1 else -1))
+        v = min(v, max_value(ch_child, v, pruning, level_no + 1))
         child.set_utility(v)
         if v < predecessor_v and pruning:
             break
