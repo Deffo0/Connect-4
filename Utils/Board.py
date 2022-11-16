@@ -4,7 +4,7 @@ def prettyPrint(boardBin):
 
 
 class Board:
-    
+
     def __init__(self, first_turn):
         self.state = 0
         self.turn = first_turn
@@ -22,7 +22,6 @@ class Board:
             self.turn = 0
             return
         self.turn = 1
-        
 
     def num_of_plays(self, col):
         col = 6 - col
@@ -49,10 +48,10 @@ class Board:
         col_shift = 6 - col
         index = 6 + col_shift * 9
         num_of_play = self.num_of_plays(col)
-        if(row >= num_of_play):
+        if row >= num_of_play:
             return -1
         player = self.state & (2 ** (index - row - 1))
-        if(player == 0):
+        if player == 0:
             return 0
         return 1
 
@@ -69,14 +68,14 @@ def get_board_bin(board):
         temp = str_num[left_index: right_index]
         for j in range(3, pre_garbage + 3):
             current = temp[j]
-            if(current == '0'):
+            if current == '0':
                 board_bin[i].append("yellow")
-            elif(current == '1'):
+            elif current == '1':
                 board_bin[i].append("red")
         for j in range(pre_garbage + 3, 9):
             current = temp[j]
             board_bin[i].append("")
-    
+
     board_bin_modified = []
 
     row_ctr = 0
@@ -86,6 +85,3 @@ def get_board_bin(board):
             board_bin_modified[row_ctr].append(board_bin[j][5 - i])
         row_ctr += 1
     return board_bin_modified
-
-
-

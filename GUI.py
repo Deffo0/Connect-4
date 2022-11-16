@@ -140,8 +140,8 @@ def display_tree(tree_root: State):
     tree.create_node(tree_root.utility, id(tree_root.board))
     tree_root.convert(tree)
     tree.show()
-    tree.to_graphviz("Resources/MinmaxTree.dot", "circle", "digraph")
-    (graph,) = pydot.graph_from_dot_file('Resources/MinmaxTree.dot')
+    tree.to_graphviz(os.path.join("Resources", "MinmaxTree.dot"), "circle", "digraph")
+    (graph,) = pydot.graph_from_dot_file(os.path.join("Resources", "MinmaxTree.dot"))
     graph.write_pdf('MinmaxTree.pdf')
     path = 'MinmaxTree.pdf'
     subprocess.Popen([path], shell=True)

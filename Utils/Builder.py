@@ -1,3 +1,6 @@
+import os
+
+
 class ButtonBuilder:
     """
     build buttons based on its construction details
@@ -150,10 +153,10 @@ class BoardBuilder:
                 self.pygame.draw.rect(self.screen, self.font_color, rect, 3)
                 cell = self.font.render("", True, self.font_color)
                 if self.board[i][j] == "red":
-                    img = self.pygame.image.load("Resources/red.png")
+                    img = self.pygame.image.load(os.path.join("Resources", "red.png"))
                     cell = self.pygame.transform.scale(img, (self.tile_size, self.tile_size))
                 elif self.board[i][j] == "yellow":
-                    img = self.pygame.image.load("Resources/yellow.png")
+                    img = self.pygame.image.load(os.path.join("Resources", "yellow.png"))
                     cell = self.pygame.transform.scale(img, (self.tile_size, self.tile_size))
 
                 self.screen.blit(cell, rect)
