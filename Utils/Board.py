@@ -4,6 +4,7 @@ def prettyPrint(boardBin):
 
 
 class Board:
+    
     def __init__(self, first_turn):
         self.state = 0
         self.turn = first_turn
