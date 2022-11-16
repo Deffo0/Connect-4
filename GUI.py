@@ -2,10 +2,7 @@ import os
 import subprocess
 import sys
 import time
-import cv2
 import pygame
-from anytree import Node, RenderTree
-from anytree.exporter import DotExporter
 import pydot
 from treelib import Tree
 

@@ -1,4 +1,3 @@
-from anytree import Node
 from treelib import Tree
 
 
