@@ -1,5 +1,5 @@
 """
-Tic Tac Toe Player
+Connect-4
 """
 import copy
 
@@ -43,7 +43,6 @@ def initial_state():
     """
     Returns starting state of the board.
     """
-    # IS this an int board or a bin board ??????
     return Board(1)
 
 
@@ -104,7 +103,6 @@ def get_player_board(board, player_color):
     """
     TODO: UPDATE FOR BITS REPRESENTATION (DONE)
     """
-    # KOTB WORK
     if player_color == red:
         player_color = 1
     elif player_color == yellow:
@@ -156,7 +154,6 @@ def exact_utility(board):
     """
     score = get_score(board)
     return score[0] - score[1]
-
 
 
 def expected_utility(board):
@@ -556,6 +553,7 @@ def unlimited_terminal(board):
         return True
     else:
         return False
+
 
 def minimax(board, pruning, limited_depth):
     """
