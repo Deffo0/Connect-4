@@ -15,6 +15,7 @@ yellow = "yellow"
 EMPTY = ""
 tree_root = None
 depth = 0
+nodes_explored = 0
 INFINITY = 9223372036854775807
 
 
@@ -158,12 +159,13 @@ def minimax(board, pruning, limited_depth):
     Returns the optimal action for the current player on the board.
     """
     root = State(board)
-    global depth, tree_root
+    global depth, tree_root, nodes_explored
     depth = limited_depth
     if player(board) == red:
         optimal = (-INFINITY, None)
         for action in actions(board):
             child = State(result(board, action))
+            nodes_explored = nodes_explored + 1
             root.add_child(child)
             utility_value = min_value(child, optimal[0], pruning, 1)
             if utility_value > optimal[0]:
@@ -174,6 +176,7 @@ def minimax(board, pruning, limited_depth):
         optimal = (INFINITY, None)
         for action in actions(board):
             child = State(result(board, action))
+            nodes_explored = nodes_explored + 1
             root.add_child(child)
             utility_value = max_value(child, optimal[0], pruning, 1)
             if utility_value < optimal[0]:
@@ -181,10 +184,12 @@ def minimax(board, pruning, limited_depth):
                 root.set_utility(optimal[0])
 
     tree_root = root
+    print("Nodes Explored: " + str(nodes_explored))
     return optimal[1], tree_root
 
 
 def max_value(child, predecessor_v, pruning, level_no):
+    global nodes_explored
     if unlimited_terminal(child.board):
         v = exact_utility(child.board)
         child.set_utility(v)
@@ -197,15 +202,17 @@ def max_value(child, predecessor_v, pruning, level_no):
     v = -1 * INFINITY
     for action in actions(child.board):
         ch_child = State(result(child.board, action))
+        nodes_explored = nodes_explored + 1
         child.add_child(ch_child)
         v = max(v, min_value(ch_child, v, pruning, level_no + 1))
         child.set_utility(v)
-        if v > predecessor_v and pruning:
+        if v >= predecessor_v and pruning:
             break
     return v
 
 
 def min_value(child, predecessor_v, pruning, level_no):
+    global nodes_explored
     if unlimited_terminal(child.board):
         v = exact_utility(child.board)
         child.set_utility(v)
@@ -218,10 +225,11 @@ def min_value(child, predecessor_v, pruning, level_no):
     v = INFINITY
     for action in actions(child.board):
         ch_child = State(result(child.board, action))
+        nodes_explored = nodes_explored + 1
         child.add_child(ch_child)
         v = min(v, max_value(ch_child, v, pruning, level_no + 1))
         child.set_utility(v)
-        if v < predecessor_v and pruning:
+        if v <= predecessor_v and pruning:
             break
     return v
 
